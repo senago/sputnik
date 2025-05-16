@@ -17,6 +17,8 @@ local-run:
 # -------------------------------- Local Env -------------------------------- #
 
 local-env-up:
+	docker-compose -f ./env/docker-compose.local.yaml up -d --wait && \
+	sleep 2 && \
 	make local-db-up
 
 local-env-stop:
@@ -28,8 +30,6 @@ local-env-down:
 # -------------------------------- Local DB -------------------------------- #
 
 local-db-up:
-	docker-compose -f ./env/docker-compose.local.yaml up -d --wait && \
-	sleep 2 && \
 	${GOBIN}/goose -dir ${MIGRATIONS_DIR} postgres "${LOCAL_PG_DSN}" up
 
 local-db-stop:
