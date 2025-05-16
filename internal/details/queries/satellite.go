@@ -54,25 +54,38 @@ func InsertSatellites(ctx context.Context, satellites []domain.Satellite) error 
 	return nil
 }
 
-const queryUpdateSatellite = `-- UpdateSatellite
-update satellite
+const queryUpdateSatellites = `-- UpdateSatellites
+update satellite s
 set
-	orbit_id = $2,
-	name = $3,
-	description = $4,
-	type = $5
-where id = $1
+	orbit_id = bulk.orbit_id,
+	name = bulk.name,
+	description = bulk.description,
+	type = bulk.type
+from (
+	select * from unnest (
+		$1::uuid[],
+		$2::uuid[],
+		$3::text[],
+		$4::text[],
+		$5::text[]
+	) as t(id, orbit_id, name, description, type)
+) as bulk
+where s.id = bulk.id
 `
 
-func UpdateSatellite(ctx context.Context, satellite domain.Satellite) error {
+func UpdateSatellites(ctx context.Context, satellites []domain.Satellite) error {
+	args := []any{
+		nest(satellites, func(s domain.Satellite) string { return s.ID.String() }),
+		nest(satellites, func(s domain.Satellite) string { return s.Orbit.ID.String() }),
+		nest(satellites, func(s domain.Satellite) string { return s.Name }),
+		nest(satellites, func(s domain.Satellite) string { return s.Description }),
+		nest(satellites, func(s domain.Satellite) string { return s.Type }),
+	}
+
 	_, err := resolveConn(ctx).Exec(
 		ctx,
-		queryUpdateSatellite,
-		satellite.ID,
-		satellite.Orbit.ID,
-		satellite.Name,
-		satellite.Description,
-		satellite.Type,
+		queryUpdateSatellites,
+		args...,
 	)
 	if err != nil {
 		return errors.Wrap(err, "exec")

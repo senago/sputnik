@@ -8,13 +8,14 @@ import (
 	"fyne.io/fyne/v2/widget"
 	"github.com/samber/lo"
 	"github.com/senago/sputnik/internal/domain"
+	"github.com/senago/sputnik/internal/gui/helpers"
 	"github.com/senago/sputnik/internal/port"
 )
 
 func NewSatelliteUpdateTab(
 	getOrbits port.GetOrbits,
 	getSatellitesByNameLike port.GetSatellitesByNameLike,
-	updateSatellite port.UpdateSatellite,
+	updateSatellites port.UpdateSatellites,
 ) *container.TabItem {
 	output := widget.NewEntry()
 
@@ -90,7 +91,7 @@ func NewSatelliteUpdateTab(
 			Type:        typeEntry.Text,
 		}
 
-		if err := updateSatellite(context.Background(), satellite); err != nil {
+		if err := updateSatellites(context.Background(), []domain.Satellite{satellite}); err != nil {
 			output.SetText(fmt.Sprintf("updateSatellite: %s", err))
 			return
 		}
@@ -100,7 +101,7 @@ func NewSatelliteUpdateTab(
 
 	return container.NewTabItem(
 		"satellite update",
-		PadContainer(
+		helpers.PadContainer(
 			container.NewVBox(
 				form,
 				output,

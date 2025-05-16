@@ -21,6 +21,14 @@ create table orbit (
 );
 
 create unique index orbit_name_idx on orbit (name);
+
+create table satellite_position (
+    id uuid not null,
+    x real not null,
+    y real not null,
+
+    primary key (id)
+) with (fillfactor=90);
 -- +goose StatementEnd
 
 -- +goose Down

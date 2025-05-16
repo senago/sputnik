@@ -1,11 +1,12 @@
-package main
+package gui
 
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/driver/desktop"
-	"github.com/senago/sputnik/internal/tabs"
+	"github.com/senago/sputnik/internal/gui/tabs"
+	"github.com/senago/sputnik/internal/ioc"
 )
 
 var closeShortcuts = []fyne.Shortcut{
@@ -14,30 +15,32 @@ var closeShortcuts = []fyne.Shortcut{
 	&desktop.CustomShortcut{KeyName: fyne.KeyW, Modifier: fyne.KeyModifierControl},
 }
 
-func startApp(appConfig *App) {
+func New(deps *ioc.Container) fyne.Window {
 	fyneApp := app.New()
 
 	window := fyneApp.NewWindow("sputnik")
-	window.Resize(fyne.NewSize(600, 300))
+	window.Resize(fyne.NewSize(900, 600))
+
 	window.SetContent(container.NewAppTabs(
 		tabs.NewSatelliteViewTab(
-			appConfig.PortGetSatellites(),
+			deps.PortGetSatellites(),
+			deps.PortUpdateSatellite(),
 		),
 		tabs.NewSatelliteCreateTab(
-			appConfig.PortGetOrbits(),
-			appConfig.PortInsertSatellite(),
+			deps.PortGetOrbits(),
+			deps.PortInsertSatellite(),
 		),
 		tabs.NewCreateOrbitTab(
-			appConfig.PortInsertOrbit(),
+			deps.PortInsertOrbit(),
 		),
 		tabs.NewSatelliteUpdateTab(
-			appConfig.PortGetOrbits(),
-			appConfig.PortGetSatellitesByNameLike(),
-			appConfig.PortUpdateSatellite(),
+			deps.PortGetOrbits(),
+			deps.PortGetSatellitesByNameLike(),
+			deps.PortUpdateSatellite(),
 		),
 		tabs.NewSatelliteDeleteTab(
-			appConfig.PortGetSatellitesByNameLike(),
-			appConfig.PortDeleteSatellites(),
+			deps.PortGetSatellitesByNameLike(),
+			deps.PortDeleteSatellites(),
 		),
 	))
 	window.CenterOnScreen()
@@ -46,5 +49,5 @@ func startApp(appConfig *App) {
 		window.Canvas().AddShortcut(shortcut, func(fyne.Shortcut) { window.Close() })
 	}
 
-	window.ShowAndRun()
+	return window
 }

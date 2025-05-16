@@ -8,6 +8,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 	"github.com/samber/lo"
 	"github.com/senago/sputnik/internal/domain"
+	"github.com/senago/sputnik/internal/gui/helpers"
 	"github.com/senago/sputnik/internal/port"
 )
 
@@ -71,7 +72,7 @@ func NewSatelliteCreateTab(
 
 	return container.NewTabItem(
 		"create satellite",
-		PadContainer(
+		helpers.PadContainer(
 			container.NewVBox(
 				form,
 				output,

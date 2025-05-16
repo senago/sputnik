@@ -10,7 +10,7 @@ type GetSatellites func(ctx context.Context) ([]domain.Satellite, error)
 
 type GetSatellitesByNameLike func(ctx context.Context, nameLike string) ([]domain.Satellite, error)
 
-type UpdateSatellite func(ctx context.Context, satellite domain.Satellite) error
+type UpdateSatellites func(ctx context.Context, satellite []domain.Satellite) error
 
 type InsertSatellite func(ctx context.Context, satellite domain.Satellite) error
 

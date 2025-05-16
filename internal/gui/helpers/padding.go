@@ -1,4 +1,4 @@
-package tabs
+package helpers
 
 import (
 	"image/color"

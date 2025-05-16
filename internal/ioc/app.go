@@ -1,4 +1,4 @@
-package main
+package ioc
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/senago/sputnik/internal/details/db"
 )
 
-type App struct {
+type Container struct {
 	config Config
 	closer *closer.Closer
 
@@ -17,7 +17,7 @@ type App struct {
 	db     *db.DB
 }
 
-func NewApp(ctx context.Context, config Config) (*App, error) {
+func New(ctx context.Context, config Config) (*Container, error) {
 	lifoCloser := closer.New()
 
 	dbPool, err := pgxpool.New(ctx, config.DSN)
@@ -30,7 +30,7 @@ func NewApp(ctx context.Context, config Config) (*App, error) {
 		return nil
 	})
 
-	return &App{
+	return &Container{
 		config: config,
 		closer: lifoCloser,
 		dbPool: dbPool,
@@ -38,6 +38,6 @@ func NewApp(ctx context.Context, config Config) (*App, error) {
 	}, nil
 }
 
-func (a *App) Close() error {
+func (a *Container) Close() error {
 	return a.closer.Close()
 }

@@ -41,12 +41,32 @@ func GetSatellites(ctx context.Context, params GetSatellitesParams) ([]domain.Sa
 		},
 	)
 
+	satelliteIDs := lo.Map(
+		satelliteModels,
+		func(sm satelliteModel, _ int) domain.SatelliteID {
+			return sm.ID
+		},
+	)
+
+	positions, err := getSatellitePositions(ctx, satelliteIDs)
+	if err != nil {
+		return nil, errors.Wrap(err, "getSatellitePositions")
+	}
+
+	positionsByID := lo.SliceToMap(
+		positions,
+		func(spm sattelitePositionModel) (domain.SatelliteID, domain.Position) {
+			return spm.ID, spm.Position
+		},
+	)
+
 	satellites := lo.Map(
 		satelliteModels,
 		func(sm satelliteModel, _ int) domain.Satellite {
 			return domain.Satellite{
 				ID:          sm.ID,
 				Orbit:       orbitsByID[sm.OrbitID],
+				Position:    positionsByID[sm.ID],
 				Name:        sm.Name,
 				Description: sm.Description,
 				Type:        sm.Type,

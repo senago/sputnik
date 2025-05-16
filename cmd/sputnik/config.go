@@ -1,13 +1,13 @@
 package main
 
-import "os"
+import (
+	"os"
 
-type Config struct {
-	DSN string
-}
+	"github.com/senago/sputnik/internal/ioc"
+)
 
-func GetConfig() Config {
-	return Config{
+func GetConfig() ioc.Config {
+	return ioc.Config{
 		DSN: os.Getenv("PG_DSN"),
 	}
 }

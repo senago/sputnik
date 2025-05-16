@@ -8,6 +8,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 	"github.com/senago/sputnik/internal/domain"
+	"github.com/senago/sputnik/internal/gui/helpers"
 	"github.com/senago/sputnik/internal/port"
 )
 
@@ -47,7 +48,7 @@ func NewCreateOrbitTab(
 
 	return container.NewTabItem(
 		"orbit create",
-		PadContainer(
+		helpers.PadContainer(
 			container.NewVBox(
 				form,
 				output,
