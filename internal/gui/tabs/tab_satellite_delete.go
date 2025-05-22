@@ -60,7 +60,7 @@ func NewSatelliteDeleteTab(
 			return
 		}
 
-		output.SetText(fmt.Sprintf("successfully deleted satellite id=[%v]", satelliteID.Text))
+		output.SetText(fmt.Sprintf("deleted satellite [%s]", satelliteID.Text))
 	}
 
 	return helpers.NewTab(

@@ -43,7 +43,7 @@ func NewCreateOrbitTab(
 			return
 		}
 
-		output.SetText("successfully created orbit")
+		output.SetText(fmt.Sprintf("created orbit [%s]", orbit.Name))
 	}
 
 	return helpers.NewTab(

@@ -69,7 +69,7 @@ func NewSatelliteCreateTab(
 			return
 		}
 
-		output.SetText("successfully created satellite")
+		output.SetText(fmt.Sprintf("created satellite [%s]", satellite.Name))
 	}
 
 	loadOrbits := func() {

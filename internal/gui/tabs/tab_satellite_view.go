@@ -59,7 +59,7 @@ func NewSatelliteViewTab(
 
 			text := widget.NewLabel(
 				fmt.Sprintf(
-					"[%s] [%s] [%s]",
+					"[%s]\n[%s]\n[%s]",
 					s.Name, s.Description, s.Orbit.Name,
 				),
 			)

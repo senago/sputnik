@@ -89,7 +89,7 @@ func NewSatelliteUpdateTab(
 			return
 		}
 
-		output.SetText("successfully updated satellite")
+		output.SetText(fmt.Sprintf("updated satellite [%s]", satellite.Name))
 	}
 
 	loadOrbits := func() {
