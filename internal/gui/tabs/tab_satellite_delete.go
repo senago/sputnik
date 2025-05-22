@@ -15,7 +15,7 @@ import (
 func NewSatelliteDeleteTab(
 	getSatellitesByNameLike port.GetSatellitesByNameLike,
 	deleteSatellites port.DeleteSatellites,
-) *container.TabItem {
+) *helpers.Tab {
 	output := widget.NewLabel("")
 
 	satelliteID := widget.NewEntry()
@@ -63,12 +63,16 @@ func NewSatelliteDeleteTab(
 		output.SetText(fmt.Sprintf("successfully deleted satellite id=[%v]", satelliteID.Text))
 	}
 
-	return container.NewTabItem(
-		"satellite delete",
-		helpers.PadContainer(
-			container.NewVBox(
-				form,
-				output,
+	return helpers.NewTab(
+		container.NewTabItem(
+			"satellite delete",
+			helpers.PadContainer(
+				container.NewVBox(
+					form,
+					container.NewCenter(
+						output,
+					),
+				),
 			),
 		),
 	)

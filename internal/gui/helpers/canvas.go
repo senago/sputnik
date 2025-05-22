@@ -47,6 +47,7 @@ func (c *Canvas) AddAt(obj Object, pos fyne.Position) {
 }
 
 func (c *Canvas) RemoveAll() {
+	c.mapping = nil
 	c.content.RemoveAll()
 }
 

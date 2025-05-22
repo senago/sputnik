@@ -5,6 +5,8 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/driver/desktop"
+	"github.com/samber/lo"
+	"github.com/senago/sputnik/internal/gui/helpers"
 	"github.com/senago/sputnik/internal/gui/tabs"
 	"github.com/senago/sputnik/internal/ioc"
 )
@@ -21,7 +23,8 @@ func New(deps *ioc.Container) fyne.Window {
 	window := fyneApp.NewWindow("sputnik")
 	window.Resize(fyne.NewSize(1280, 720))
 
-	window.SetContent(container.NewAppTabs(
+	appTabs := []*helpers.Tab{
+		tabs.NewTabInfo(),
 		tabs.NewSatelliteViewTab(
 			deps.PortGetSatellites(),
 			deps.PortUpdateSatellite(),
@@ -42,7 +45,24 @@ func New(deps *ioc.Container) fyne.Window {
 			deps.PortGetSatellitesByNameLike(),
 			deps.PortDeleteSatellites(),
 		),
-	))
+	}
+
+	fyneTabs := container.NewAppTabs(
+		lo.Map(
+			appTabs,
+			func(appTab *helpers.Tab, _ int) *container.TabItem {
+				return appTab.TabItem
+			},
+		)...,
+	)
+
+	fyneTabs.OnSelected = func(ti *container.TabItem) {
+		for _, appTab := range appTabs {
+			appTab.OnSelected(ti)
+		}
+	}
+
+	window.SetContent(fyneTabs)
 
 	window.CenterOnScreen()
 

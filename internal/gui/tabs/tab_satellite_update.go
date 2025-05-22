@@ -16,7 +16,7 @@ func NewSatelliteUpdateTab(
 	getOrbits port.GetOrbits,
 	getSatellitesByNameLike port.GetSatellitesByNameLike,
 	updateSatellites port.UpdateSatellites,
-) *container.TabItem {
+) *helpers.Tab {
 	output := widget.NewLabel("")
 
 	resolveOrbits := func() map[string]domain.Orbit {
@@ -92,18 +92,22 @@ func NewSatelliteUpdateTab(
 		output.SetText("successfully updated satellite")
 	}
 
-	go func() {
+	loadOrbits := func() {
 		orbits := resolveOrbits()
 		orbitNameEntry.SetOptions(lo.Keys(orbits))
-	}()
+	}
 
-	return container.NewTabItem(
-		"satellite update",
-		helpers.PadContainer(
-			container.NewVBox(
-				form,
-				output,
+	return helpers.NewTab(
+		container.NewTabItem(
+			"satellite update",
+			helpers.PadContainer(
+				container.NewVBox(
+					form,
+					container.NewCenter(
+						output,
+					),
+				),
 			),
 		),
-	)
+	).SetOnSelected(loadOrbits)
 }

@@ -14,7 +14,7 @@ import (
 
 func NewCreateOrbitTab(
 	insertOrbit port.InsertOrbit,
-) *container.TabItem {
+) *helpers.Tab {
 	nameEntry := widget.NewEntry()
 	heightEntry := widget.NewEntry()
 
@@ -46,12 +46,16 @@ func NewCreateOrbitTab(
 		output.SetText("successfully created orbit")
 	}
 
-	return container.NewTabItem(
-		"orbit create",
-		helpers.PadContainer(
-			container.NewVBox(
-				form,
-				output,
+	return helpers.NewTab(
+		container.NewTabItem(
+			"orbit create",
+			helpers.PadContainer(
+				container.NewVBox(
+					form,
+					container.NewCenter(
+						output,
+					),
+				),
 			),
 		),
 	)

@@ -18,7 +18,7 @@ import (
 func NewSatelliteViewTab(
 	getSatellites port.GetSatellites,
 	updateSatellites port.UpdateSatellites,
-) *container.TabItem {
+) *helpers.Tab {
 	satellitesCanvas := helpers.NewCanvas()
 
 	var satellites []domain.Satellite
@@ -77,33 +77,21 @@ func NewSatelliteViewTab(
 		}
 	}
 
-	loadButton := widget.NewButton("load", loadHandler)
-	loadButton.Resize(loadButton.MinSize())
-
 	image := canvas.NewImageFromFile("./media/earth.png")
 	image.FillMode = canvas.ImageFillContain
 
-	return container.NewTabItem(
-		"satellite view",
-		helpers.PadContainer(
-			container.NewBorder(
-				container.NewHBox(
-					loadButton,
-				),
-				nil,
-				nil,
-				nil,
+	return helpers.NewTab(
+		container.NewTabItem(
+			"satellite view",
+			helpers.PadContainer(
 				container.NewStack(
 					helpers.PadContainerWithSize(
 						image,
-						fyne.NewSize(
-							150,
-							150,
-						),
+						fyne.NewSize(150, 150),
 					),
 					satellitesCanvas,
 				),
 			),
 		),
-	)
+	).SetOnSelected(loadHandler)
 }

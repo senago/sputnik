@@ -15,7 +15,7 @@ import (
 func NewSatelliteCreateTab(
 	getOrbits port.GetOrbits,
 	insertSatellite port.InsertSatellite,
-) *container.TabItem {
+) *helpers.Tab {
 	output := widget.NewLabel("")
 
 	resolveOrbits := func() map[string]domain.Orbit {
@@ -72,20 +72,22 @@ func NewSatelliteCreateTab(
 		output.SetText("successfully created satellite")
 	}
 
-	go func() {
+	loadOrbits := func() {
 		orbits := resolveOrbits()
 		orbitNameEntry.SetOptions(lo.Keys(orbits))
-	}()
+	}
 
-	return container.NewTabItem(
-		"create satellite",
-		helpers.PadContainer(
-			container.NewVBox(
-				form,
-				container.NewCenter(
-					output,
+	return helpers.NewTab(
+		container.NewTabItem(
+			"create satellite",
+			helpers.PadContainer(
+				container.NewVBox(
+					form,
+					container.NewCenter(
+						output,
+					),
 				),
 			),
 		),
-	)
+	).SetOnSelected(loadOrbits)
 }
