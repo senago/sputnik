@@ -8,37 +8,23 @@ export GOBIN:=${LOCAL_BIN}
 include env/local.env
 export
 
-local:
-	make local-env-up && trap "make local-env-stop" SIGINT && make local-run
-
-local-run:
+run:
 	PG_DSN=${LOCAL_PG_DSN} go run ./cmd/sputnik
 
-# -------------------------------- Local Env -------------------------------- #
+# -------------------------------- Docker Env -------------------------------- #
 
-local-env-up:
+docker-env-up:
 	docker-compose -f ./env/docker-compose.local.yaml up -d --wait && \
 	sleep 2 && \
-	make local-db-up
+	make migration-apply
 
-local-env-stop:
-	make local-db-stop
-
-local-env-down:
-	make local-db-down
-
-# -------------------------------- Local DB -------------------------------- #
-
-local-db-up:
-	${GOBIN}/goose -dir ${MIGRATIONS_DIR} postgres "${LOCAL_PG_DSN}" up
-
-local-db-stop:
+docker-env-stop:
 	docker-compose -f ./env/docker-compose.local.yaml stop
 
-local-db-down:
+docker-env-down:
 	docker-compose -f ./env/docker-compose.local.yaml down --remove-orphans
 
-local-psql:
+docker-psql:
 	psql ${LOCAL_PG_DSN}
 
 # -------------------------------- Migrations -------------------------------- #
@@ -49,3 +35,6 @@ install-goose:
 migration-create: install-goose
 	@[ "${name}" ] || (echo 'usage: make name="<migration name>" migration-create'; exit 1)
 	${GOBIN}/goose -dir ${MIGRATIONS_DIR} create ${name} sql
+
+migration-apply:
+	${GOBIN}/goose -dir ${MIGRATIONS_DIR} postgres "${LOCAL_PG_DSN}" up

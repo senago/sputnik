@@ -8,8 +8,9 @@ import (
 
 type Canvas struct {
 	widget.BaseWidget
-	content *fyne.Container
-	mapping []string
+	content  *fyne.Container
+	mapping  []string
+	onChange func()
 }
 
 func NewCanvas() *Canvas {
@@ -18,6 +19,10 @@ func NewCanvas() *Canvas {
 	}
 	c.ExtendBaseWidget(c)
 	return c
+}
+
+func (c *Canvas) SetOnChange(onChange func()) {
+	c.onChange = onChange
 }
 
 // CreateRenderer implements fyne.Widget.
@@ -32,6 +37,8 @@ func (c *Canvas) AddAt(obj Object, pos fyne.Position) {
 		c,
 		obj.CanvasObject,
 	)
+
+	draggable.SetOnDragEnd(c.onChange)
 
 	c.content.Add(draggable)
 	c.mapping = append(c.mapping, obj.id)

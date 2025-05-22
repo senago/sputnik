@@ -8,8 +8,12 @@ import (
 	"fyne.io/fyne/v2/container"
 )
 
-func PadContainer(c fyne.CanvasObject) *fyne.Container {
+func PadContainer(obj fyne.CanvasObject) *fyne.Container {
+	return PadContainerWithSize(obj, fyne.NewSize(16, 16))
+}
+
+func PadContainerWithSize(obj fyne.CanvasObject, s fyne.Size) *fyne.Container {
 	rect := canvas.NewRectangle(color.Transparent)
-	rect.SetMinSize(fyne.NewSize(16, 16))
-	return container.NewBorder(rect, rect, rect, rect, c)
+	rect.SetMinSize(s)
+	return container.NewBorder(rect, rect, rect, rect, obj)
 }

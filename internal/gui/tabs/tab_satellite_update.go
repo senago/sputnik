@@ -17,7 +17,7 @@ func NewSatelliteUpdateTab(
 	getSatellitesByNameLike port.GetSatellitesByNameLike,
 	updateSatellites port.UpdateSatellites,
 ) *container.TabItem {
-	output := widget.NewEntry()
+	output := widget.NewLabel("")
 
 	resolveOrbits := func() map[string]domain.Orbit {
 		orbits, err := getOrbits(context.Background())
@@ -36,7 +36,7 @@ func NewSatelliteUpdateTab(
 
 	satelliteID := widget.NewEntry()
 	satelliteNameEntry := widget.NewSelectEntry(nil)
-	orbitNameEntry := widget.NewSelectEntry(nil)
+	orbitNameEntry := widget.NewSelect(nil, nil)
 	descriptionEntry := widget.NewEntry()
 	typeEntry := widget.NewEntry()
 
@@ -66,22 +66,15 @@ func NewSatelliteUpdateTab(
 
 			satelliteID.SetText(satellite.ID.String())
 
-			orbitNameEntry.SetOptions([]string{satellite.Orbit.Name})
-			orbitNameEntry.SetText(satellite.Orbit.Name)
+			orbitNameEntry.SetSelected(satellite.Orbit.Name)
 
 			descriptionEntry.SetText(satellite.Description)
 			typeEntry.SetText(satellite.Type)
 		}
 	}
 
-	orbitNameEntry.OnCursorChanged = func() {
-		orbits := resolveOrbits()
-
-		orbitNameEntry.SetOptions(lo.Keys(orbits))
-	}
-
 	form.OnSubmit = func() {
-		orbit := resolveOrbits()[orbitNameEntry.Text]
+		orbit := resolveOrbits()[orbitNameEntry.Selected]
 
 		satellite := domain.Satellite{
 			ID:          domain.SatelliteIDFromString(satelliteID.Text),
@@ -98,6 +91,11 @@ func NewSatelliteUpdateTab(
 
 		output.SetText("successfully updated satellite")
 	}
+
+	go func() {
+		orbits := resolveOrbits()
+		orbitNameEntry.SetOptions(lo.Keys(orbits))
+	}()
 
 	return container.NewTabItem(
 		"satellite update",

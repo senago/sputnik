@@ -23,7 +23,7 @@ func NewCreateOrbitTab(
 		widget.NewFormItem("Height (km)", heightEntry),
 	)
 
-	output := widget.NewEntry()
+	output := widget.NewLabel("")
 
 	form.OnSubmit = func() {
 		heightKM, err := strconv.ParseInt(heightEntry.Text, 10, 64)

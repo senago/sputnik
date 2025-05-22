@@ -19,7 +19,7 @@ func New(deps *ioc.Container) fyne.Window {
 	fyneApp := app.New()
 
 	window := fyneApp.NewWindow("sputnik")
-	window.Resize(fyne.NewSize(900, 600))
+	window.Resize(fyne.NewSize(1280, 720))
 
 	window.SetContent(container.NewAppTabs(
 		tabs.NewSatelliteViewTab(
@@ -43,6 +43,7 @@ func New(deps *ioc.Container) fyne.Window {
 			deps.PortDeleteSatellites(),
 		),
 	))
+
 	window.CenterOnScreen()
 
 	for _, shortcut := range closeShortcuts {

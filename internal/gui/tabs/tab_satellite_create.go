@@ -16,7 +16,7 @@ func NewSatelliteCreateTab(
 	getOrbits port.GetOrbits,
 	insertSatellite port.InsertSatellite,
 ) *container.TabItem {
-	output := widget.NewEntry()
+	output := widget.NewLabel("")
 
 	resolveOrbits := func() map[string]domain.Orbit {
 		orbits, err := getOrbits(context.Background())
@@ -34,9 +34,15 @@ func NewSatelliteCreateTab(
 	}
 
 	satelliteNameEntry := widget.NewEntry()
-	orbitNameEntry := widget.NewSelectEntry(nil)
+	orbitNameEntry := widget.NewSelect(nil, nil)
 	descriptionEntry := widget.NewEntry()
-	typeEntry := widget.NewEntry()
+	typeEntry := widget.NewSelect(
+		domain.AllSatelliteType(),
+		nil,
+	)
+
+	satelliteNameEntry.SetPlaceHolder("Satellite name")
+	descriptionEntry.SetPlaceHolder("Satellite description")
 
 	form := widget.NewForm(
 		widget.NewFormItem("Name", satelliteNameEntry),
@@ -45,21 +51,17 @@ func NewSatelliteCreateTab(
 		widget.NewFormItem("Type", typeEntry),
 	)
 
-	orbitNameEntry.OnCursorChanged = func() {
-		orbits := resolveOrbits()
-
-		orbitNameEntry.SetOptions(lo.Keys(orbits))
-	}
+	form.SubmitText = "Create"
 
 	form.OnSubmit = func() {
-		orbit := resolveOrbits()[orbitNameEntry.Text]
+		orbit := resolveOrbits()[orbitNameEntry.Selected]
 
 		satellite := domain.Satellite{
 			ID:          domain.NewSatelliteID(),
 			Orbit:       orbit,
 			Name:        satelliteNameEntry.Text,
 			Description: descriptionEntry.Text,
-			Type:        typeEntry.Text,
+			Type:        typeEntry.Selected,
 		}
 
 		if err := insertSatellite(context.Background(), satellite); err != nil {
@@ -70,12 +72,19 @@ func NewSatelliteCreateTab(
 		output.SetText("successfully created satellite")
 	}
 
+	go func() {
+		orbits := resolveOrbits()
+		orbitNameEntry.SetOptions(lo.Keys(orbits))
+	}()
+
 	return container.NewTabItem(
 		"create satellite",
 		helpers.PadContainer(
 			container.NewVBox(
 				form,
-				output,
+				container.NewCenter(
+					output,
+				),
 			),
 		),
 	)

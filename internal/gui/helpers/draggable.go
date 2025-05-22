@@ -8,8 +8,9 @@ import (
 type DraggableItem struct {
 	widget.BaseWidget
 
-	parent fyne.Widget
-	object fyne.CanvasObject
+	parent    fyne.Widget
+	object    fyne.CanvasObject
+	onDragEnd func()
 }
 
 func NewDraggableItem(parent fyne.Widget, obj fyne.CanvasObject) *DraggableItem {
@@ -22,6 +23,10 @@ func NewDraggableItem(parent fyne.Widget, obj fyne.CanvasObject) *DraggableItem 
 	d.Resize(obj.MinSize())
 
 	return d
+}
+
+func (d *DraggableItem) SetOnDragEnd(onDragEnd func()) {
+	d.onDragEnd = onDragEnd
 }
 
 func (d *DraggableItem) CreateRenderer() fyne.WidgetRenderer {
@@ -44,4 +49,8 @@ func (d *DraggableItem) Move(pos fyne.Position) {
 	d.BaseWidget.Move(diff)
 }
 
-func (d *DraggableItem) DragEnd() {}
+func (d *DraggableItem) DragEnd() {
+	if d.onDragEnd != nil {
+		d.onDragEnd()
+	}
+}

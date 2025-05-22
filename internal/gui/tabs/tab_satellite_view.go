@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"path"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -22,6 +23,25 @@ func NewSatelliteViewTab(
 
 	var satellites []domain.Satellite
 
+	saveHandler := func() {
+		positions := satellitesCanvas.ObjectPositions()
+
+		for idx := range satellites {
+			if pos, ok := positions[satellites[idx].Name]; ok {
+				satellites[idx] = satellites[idx].SetPosition(domain.Position{
+					X: pos.X,
+					Y: pos.Y,
+				})
+			}
+		}
+
+		if err := updateSatellites(context.Background(), satellites); err != nil {
+			log.Println("[saveHandler] updateSatellites:", err)
+		}
+	}
+
+	satellitesCanvas.SetOnChange(saveHandler)
+
 	loadHandler := func() {
 		satellitesCanvas.RemoveAll()
 
@@ -33,13 +53,13 @@ func NewSatelliteViewTab(
 		}
 
 		for _, s := range satellites {
-			img := canvas.NewImageFromFile("./media/resource-p.png")
+			img := canvas.NewImageFromFile(path.Join("./media", s.Type+".png"))
 			img.FillMode = canvas.ImageFillContain
 			img.SetMinSize(fyne.NewSize(50, 50))
 
 			text := widget.NewLabel(
 				fmt.Sprintf(
-					"%s, %s, %s",
+					"[%s] [%s] [%s]",
 					s.Name, s.Description, s.Orbit.Name,
 				),
 			)
@@ -60,26 +80,6 @@ func NewSatelliteViewTab(
 	loadButton := widget.NewButton("load", loadHandler)
 	loadButton.Resize(loadButton.MinSize())
 
-	saveHandler := func() {
-		positions := satellitesCanvas.ObjectPositions()
-
-		for idx := range satellites {
-			if pos, ok := positions[satellites[idx].Name]; ok {
-				satellites[idx] = satellites[idx].SetPosition(domain.Position{
-					X: pos.X,
-					Y: pos.Y,
-				})
-			}
-		}
-
-		if err := updateSatellites(context.Background(), satellites); err != nil {
-			log.Println("[saveHandler] updateSatellites:", err)
-		}
-	}
-
-	saveButton := widget.NewButton("save", saveHandler)
-	saveButton.Resize(saveButton.MinSize())
-
 	image := canvas.NewImageFromFile("./media/earth.png")
 	image.FillMode = canvas.ImageFillContain
 
@@ -89,13 +89,18 @@ func NewSatelliteViewTab(
 			container.NewBorder(
 				container.NewHBox(
 					loadButton,
-					saveButton,
 				),
 				nil,
 				nil,
 				nil,
 				container.NewStack(
-					image,
+					helpers.PadContainerWithSize(
+						image,
+						fyne.NewSize(
+							150,
+							150,
+						),
+					),
 					satellitesCanvas,
 				),
 			),

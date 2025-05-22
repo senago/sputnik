@@ -16,7 +16,7 @@ func NewSatelliteDeleteTab(
 	getSatellitesByNameLike port.GetSatellitesByNameLike,
 	deleteSatellites port.DeleteSatellites,
 ) *container.TabItem {
-	output := widget.NewEntry()
+	output := widget.NewLabel("")
 
 	satelliteID := widget.NewEntry()
 	satelliteNameEntry := widget.NewSelectEntry(nil)
