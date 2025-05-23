@@ -38,3 +38,11 @@ migration-create: install-goose
 
 migration-apply:
 	${GOBIN}/goose -dir ${MIGRATIONS_DIR} postgres "${LOCAL_PG_DSN}" up
+
+# -------------------------------- Load tests -------------------------------- #
+
+run-api:
+	PG_DSN=${LOCAL_PG_DSN} go run ./cmd/api
+
+run-k6:
+	(cd tests/k6 && k6 run script.js)

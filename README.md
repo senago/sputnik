@@ -27,3 +27,12 @@ make run
 make docker-env-up
 make run
 ```
+
+## Load tests
+```sh
+make run-api
+```
+
+```sh
+make rrun-k6
+```
