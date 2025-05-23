@@ -84,22 +84,6 @@ func (h *HTTPHandler) GetSatellites(w http.ResponseWriter, r *http.Request) erro
 	return err
 }
 
-func (h *HTTPHandler) PushMany(w http.ResponseWriter, r *http.Request) error {
-	return nil
-}
-
-func (h *HTTPHandler) RetryTasks(w http.ResponseWriter, _ *http.Request) error {
-	return nil
-}
-
-func (h *HTTPHandler) Stop(http.ResponseWriter, *http.Request) error {
-	return nil
-}
-
-func (h *HTTPHandler) Start(http.ResponseWriter, *http.Request) error {
-	return nil
-}
-
 func respond500OnErr(
 	wrappedFunc func(http.ResponseWriter, *http.Request) error,
 ) func(http.ResponseWriter, *http.Request) {
