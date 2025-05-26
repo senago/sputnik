@@ -2,8 +2,8 @@ package queries
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/cockroachdb/errors"
 	"github.com/senago/sputnik/internal/details/db"
 )
 
@@ -12,5 +12,5 @@ func resolveConn(ctx context.Context) db.Executor {
 		return conn.Resolver(ctx)
 	}
 
-	panic(errors.AssertionFailedf("insufficient context to resolve conn"))
+	panic(fmt.Errorf("insufficient context to resolve conn"))
 }

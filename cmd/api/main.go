@@ -41,7 +41,7 @@ func main() {
 	go func() {
 		log.Printf("running on [%s]\n", addr)
 		if err := server.ListenAndServe(); err != nil {
-			log.Fatalf("finished serving: %v", err)
+			log.Printf("finished serving: %v", err)
 		}
 	}()
 

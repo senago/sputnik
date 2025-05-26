@@ -2,8 +2,8 @@ package ioc
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/cockroachdb/errors"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/senago/sputnik/cmd/sputnik/closer"
 	"github.com/senago/sputnik/internal/details/db"
@@ -25,7 +25,7 @@ func New(ctx context.Context, config Config) (*Container, error) {
 
 	dbPool, err := pgxpool.New(ctx, config.DSN)
 	if err != nil {
-		return nil, errors.Wrap(err, "pgxpool.New")
+		return nil, fmt.Errorf("pgxpool.New: %w", err)
 	}
 
 	lifoCloser.Add(func() error {
@@ -52,11 +52,11 @@ func (c *Container) PortInsertSatellite() port.InsertSatellite {
 		// Have you heard of transactions?
 
 		if err := queries.InsertSatellites(ctx, []domain.Satellite{satellite}); err != nil {
-			return errors.Wrap(err, "queries.InsertSatellites")
+			return fmt.Errorf("queries.InsertSatellites: %w", err)
 		}
 
 		if err := queries.InsertOrUpdateSatellitePositions(ctx, []domain.Satellite{satellite}); err != nil {
-			return errors.Wrap(err, "queries.InsertOrUpdateSatellitePositions")
+			return fmt.Errorf("queries.InsertOrUpdateSatellitePositions: %w", err)
 		}
 
 		return nil
@@ -70,11 +70,11 @@ func (c *Container) PortUpdateSatellite() port.UpdateSatellites {
 		// Have you heard of transactions?
 
 		if err := queries.UpdateSatellites(ctx, satellites); err != nil {
-			return errors.Wrap(err, "queries.UpdateSatellites")
+			return fmt.Errorf("queries.UpdateSatellites: %w", err)
 		}
 
 		if err := queries.InsertOrUpdateSatellitePositions(ctx, satellites); err != nil {
-			return errors.Wrap(err, "InsertOrUpdateSatellitePositions")
+			return fmt.Errorf("InsertOrUpdateSatellitePositions: %w", err)
 		}
 
 		return nil

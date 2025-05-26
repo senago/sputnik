@@ -2,8 +2,8 @@ package queries
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/cockroachdb/errors"
 	"github.com/jackc/pgx/v5"
 	"github.com/senago/sputnik/internal/domain"
 )
@@ -48,7 +48,7 @@ func InsertSatellites(ctx context.Context, satellites []domain.Satellite) error 
 		args...,
 	)
 	if err != nil {
-		return errors.Wrap(err, "exec")
+		return fmt.Errorf("exec: %w", err)
 	}
 
 	return nil
@@ -88,7 +88,7 @@ func UpdateSatellites(ctx context.Context, satellites []domain.Satellite) error 
 		args...,
 	)
 	if err != nil {
-		return errors.Wrap(err, "exec")
+		return fmt.Errorf("exec: %w", err)
 	}
 
 	return nil
@@ -106,7 +106,7 @@ func DeleteSatellites(ctx context.Context, satelliteIDs []domain.SatelliteID) er
 		nest(satelliteIDs, func(sid domain.SatelliteID) string { return sid.String() }),
 	)
 	if err != nil {
-		return errors.Wrap(err, "exec")
+		return fmt.Errorf("exec: %w", err)
 	}
 
 	return nil
@@ -150,7 +150,7 @@ func getSatellitesModels(ctx context.Context, params GetSatellitesParams) ([]sat
 		args...,
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, "query")
+		return nil, fmt.Errorf("query: %w", err)
 	}
 
 	return scanRows(

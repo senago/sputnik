@@ -2,8 +2,8 @@ package queries
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/cockroachdb/errors"
 	"github.com/jackc/pgx/v5"
 	"github.com/senago/sputnik/internal/domain"
 )
@@ -34,7 +34,7 @@ func InsertOrbits(ctx context.Context, orbits []domain.Orbit) error {
 		args...,
 	)
 	if err != nil {
-		return errors.Wrap(err, "exec")
+		return fmt.Errorf("exec: %w", err)
 	}
 
 	return nil
@@ -54,7 +54,7 @@ func GetOrbits(ctx context.Context) ([]domain.Orbit, error) {
 		queryGetOrbits,
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, "query")
+		return nil, fmt.Errorf("query: %w", err)
 	}
 
 	return scanRows(
@@ -85,7 +85,7 @@ func GetOrbitsByID(ctx context.Context, orbitIDs []domain.OrbitID) ([]domain.Orb
 		nest(orbitIDs, func(oid domain.OrbitID) string { return oid.String() }),
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, "query")
+		return nil, fmt.Errorf("query: %w", err)
 	}
 
 	return scanRows(

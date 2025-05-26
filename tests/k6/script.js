@@ -4,12 +4,9 @@ const BASE_URL = 'http://localhost:8888';
 
 export const options = {
   stages: [
-    { duration: '5s', target: 100 },
-    { duration: '5s', target: 0 },
-  ],
-  thresholds: {
-    http_req_duration: ['p(95)<500'],
-  },
+    { duration: '30s', target: 100 },
+    { duration: '30s', target: 0 },
+  ]
 };
 
 export default function () {

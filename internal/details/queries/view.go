@@ -2,8 +2,8 @@ package queries
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/cockroachdb/errors"
 	"github.com/samber/lo"
 	"github.com/senago/sputnik/internal/domain"
 )
@@ -15,7 +15,7 @@ type GetSatellitesParams struct {
 func GetSatellites(ctx context.Context, params GetSatellitesParams) ([]domain.Satellite, error) {
 	satelliteModels, err := getSatellitesModels(ctx, params)
 	if err != nil {
-		return nil, errors.Wrap(err, "getSatellitesModels")
+		return nil, fmt.Errorf("getSatellitesModels: %w", err)
 	}
 
 	if len(satelliteModels) == 0 {
@@ -31,7 +31,7 @@ func GetSatellites(ctx context.Context, params GetSatellitesParams) ([]domain.Sa
 
 	orbits, err := GetOrbitsByID(ctx, orbitIDs)
 	if err != nil {
-		return nil, errors.Wrap(err, "GetOrbitsByID")
+		return nil, fmt.Errorf("GetOrbitsByID: %w", err)
 	}
 
 	orbitsByID := lo.SliceToMap(
@@ -50,7 +50,7 @@ func GetSatellites(ctx context.Context, params GetSatellitesParams) ([]domain.Sa
 
 	positions, err := getSatellitePositions(ctx, satelliteIDs)
 	if err != nil {
-		return nil, errors.Wrap(err, "getSatellitePositions")
+		return nil, fmt.Errorf("getSatellitePositions: %w", err)
 	}
 
 	positionsByID := lo.SliceToMap(

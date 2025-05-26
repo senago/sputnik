@@ -1,7 +1,6 @@
 package queries
 
 import (
-	"github.com/cockroachdb/errors"
 	"github.com/jackc/pgx/v5"
 	"github.com/lib/pq"
 )
@@ -24,13 +23,13 @@ func scanRows[T any](rows pgx.Rows, scanner func(row pgx.Row, item *T) error) ([
 	for rows.Next() {
 		var item T
 		if err := scanner(rows, &item); err != nil {
-			return nil, errors.Wrap(err, "scanner")
+			return nil, err
 		}
 		items = append(items, item)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, errors.Wrap(err, "rows.Err")
+		return nil, err
 	}
 
 	return items, nil
