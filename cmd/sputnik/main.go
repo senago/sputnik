@@ -18,10 +18,19 @@ func main() {
 
 	container, err := ioc.New(
 		ctx,
-		GetConfig(),
 	)
 	if err != nil {
 		exitWithError(err)
+	}
+
+	if dsn := GetDSN(); dsn != "" {
+		if err := container.ConnectDB(ctx, dsn); err != nil {
+			exitWithError(fmt.Errorf(
+				"failed to connect to [%v]: %v",
+				dsn,
+				err,
+			))
+		}
 	}
 
 	window := gui.New(container)

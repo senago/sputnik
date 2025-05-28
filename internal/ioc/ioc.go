@@ -13,36 +13,45 @@ import (
 )
 
 type Container struct {
-	config Config
 	closer *closer.Closer
 
-	dbPool *pgxpool.Pool
-	db     *db.DB
+	db *db.DB
 }
 
-func New(ctx context.Context, config Config) (*Container, error) {
+func New(ctx context.Context) (*Container, error) {
 	lifoCloser := closer.New()
 
-	dbPool, err := pgxpool.New(ctx, config.DSN)
+	return &Container{
+		closer: lifoCloser,
+	}, nil
+}
+
+func (c *Container) ConnectDB(ctx context.Context, dsn string) error {
+	dbPool, err := pgxpool.New(ctx, dsn)
 	if err != nil {
-		return nil, fmt.Errorf("pgxpool.New: %w", err)
+		return fmt.Errorf("pgxpool.New: %w", err)
 	}
 
-	lifoCloser.Add(func() error {
+	c.closer.Add(func() error {
 		dbPool.Close()
 		return nil
 	})
 
-	return &Container{
-		config: config,
-		closer: lifoCloser,
-		dbPool: dbPool,
-		db:     db.New(dbPool),
-	}, nil
+	if err := dbPool.Ping(ctx); err != nil {
+		return fmt.Errorf("ping: %w", err)
+	}
+
+	c.db = db.New(dbPool)
+
+	if err := c.applyMigrations(ctx); err != nil {
+		return fmt.Errorf("applyMigrations: %w", err)
+	}
+
+	return nil
 }
 
-func (a *Container) Close() error {
-	return a.closer.Close()
+func (c *Container) Close() error {
+	return c.closer.Close()
 }
 
 func (c *Container) PortInsertSatellite() port.InsertSatellite {
@@ -127,4 +136,14 @@ func (c *Container) PortGetOrbits() port.GetOrbits {
 
 		return queries.GetOrbits(ctx)
 	}
+}
+
+func (c *Container) applyMigrations(ctx context.Context) error {
+	ctx = c.db.MasterIntoContext(ctx)
+
+	return queries.ApplyMigrations(ctx)
+}
+
+func (c *Container) IsConnectedToDB() bool {
+	return c.db != nil
 }

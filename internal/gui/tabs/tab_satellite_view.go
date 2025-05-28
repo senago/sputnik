@@ -3,22 +3,28 @@ package tabs
 import (
 	"context"
 	"fmt"
+	"image/color"
 	"log"
-	"path"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
+	"github.com/samber/lo"
 	"github.com/senago/sputnik/internal/domain"
 	"github.com/senago/sputnik/internal/gui/helpers"
+	"github.com/senago/sputnik/internal/media"
 	"github.com/senago/sputnik/internal/port"
 )
+
+// the hell is that?
+const earthPadding = 150
 
 func NewSatelliteViewTab(
 	getSatellites port.GetSatellites,
 	updateSatellites port.UpdateSatellites,
 ) *helpers.Tab {
+	circlesContainer := container.NewStack()
 	satellitesCanvas := helpers.NewCanvas()
 
 	var satellites []domain.Satellite
@@ -44,6 +50,7 @@ func NewSatelliteViewTab(
 
 	loadHandler := func() {
 		satellitesCanvas.RemoveAll()
+		circlesContainer.RemoveAll()
 
 		var err error
 		satellites, err = getSatellites(context.Background())
@@ -52,8 +59,47 @@ func NewSatelliteViewTab(
 			return
 		}
 
+		orbits := lo.UniqBy(
+			lo.Map(
+				satellites,
+				func(s domain.Satellite, _ int) domain.Orbit {
+					return s.Orbit
+				},
+			),
+			func(o domain.Orbit) string {
+				return o.Name
+			},
+		)
+
+		orbitCircles := lo.Map(
+			orbits,
+			func(o domain.Orbit, _ int) *canvas.Circle {
+				circle := canvas.NewCircle(color.Transparent)
+				circle.StrokeColor = color.RGBA{
+					R: 0,
+					G: 25,
+					B: 200,
+					A: 70,
+				}
+				circle.StrokeWidth = 4
+
+				return circle
+			},
+		)
+
+		for idx, circle := range orbitCircles {
+			antiPadding := float32(orbits[idx].HeightKm * 3 / 4)
+
+			circlesContainer.Add(
+				helpers.PadContainerWithSize(
+					circle,
+					fyne.NewSize(earthPadding-antiPadding, earthPadding-antiPadding),
+				),
+			)
+		}
+
 		for _, s := range satellites {
-			img := canvas.NewImageFromFile(path.Join("./media", s.Type+".png"))
+			img := canvas.NewImageFromImage(media.GetSatelliteImage(s.Type))
 			img.FillMode = canvas.ImageFillContain
 			img.SetMinSize(fyne.NewSize(50, 50))
 
@@ -77,7 +123,7 @@ func NewSatelliteViewTab(
 		}
 	}
 
-	image := canvas.NewImageFromFile("./media/earth.png")
+	image := canvas.NewImageFromImage(media.GetEarthImage())
 	image.FillMode = canvas.ImageFillContain
 
 	return helpers.NewTab(
@@ -89,6 +135,7 @@ func NewSatelliteViewTab(
 						image,
 						fyne.NewSize(150, 150),
 					),
+					circlesContainer,
 					satellitesCanvas,
 				),
 			),

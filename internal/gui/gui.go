@@ -24,7 +24,10 @@ func New(deps *ioc.Container) fyne.Window {
 	window.Resize(fyne.NewSize(1280, 720))
 
 	appTabs := []*helpers.Tab{
-		tabs.NewTabInfo(),
+		tabs.NewTabInfo(
+			deps.PortInsertOrbit(),
+			deps.PortInsertSatellite(),
+		),
 		tabs.NewSatelliteViewTab(
 			deps.PortGetSatellites(),
 			deps.PortUpdateSatellite(),
