@@ -31,6 +31,8 @@ func main() {
 				err,
 			))
 		}
+	} else {
+		exitWithError(fmt.Errorf("PG_DSN is required"))
 	}
 
 	window := gui.New(container)
