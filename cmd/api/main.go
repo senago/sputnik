@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -15,9 +16,16 @@ import (
 
 const addr = ":8888"
 
+var (
+	pgDSN string
+)
+
 func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
 	defer cancel()
+
+	flag.StringVar(&pgDSN, "pg_dsn", "", "postgres dsn string")
+	flag.Parse()
 
 	container, err := ioc.New(
 		ctx,
@@ -26,11 +34,11 @@ func main() {
 		exitWithError(err)
 	}
 
-	if dsn := GetDSN(); dsn != "" {
-		if err := container.ConnectDB(ctx, dsn); err != nil {
+	if pgDSN != "" {
+		if err := container.ConnectDB(ctx, pgDSN); err != nil {
 			log.Printf(
 				"failed to connect to [%v]: %v\n",
-				dsn,
+				pgDSN,
 				err,
 			)
 		}

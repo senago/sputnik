@@ -8,18 +8,9 @@
 - postgres@13
 - golang@1.24
 
-В [env/local.env](env/local.env) указать:
-- LOCAL_PG_PORT: порт, на котором развернут постгрес
-- LOCAL_PG_DSN: dsn до инстанса постгреса
-
-На постгресе необходимо применить миграции:
-```sh
-make migration-apply
-```
-
 После этого запуск:
 ```sh
-make run
+go run ./cmd/sputnik --pg_dsn=<dsn>
 ```
 
 ### Запуск с docker

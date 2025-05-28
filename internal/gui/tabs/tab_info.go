@@ -72,12 +72,14 @@ func NewTabInfo(
 			for _, orbit := range orbits {
 				if err := insertOrbit(context.Background(), orbit); err != nil {
 					log.Printf("[loadDefaults] insertOrbit: %v", err)
+					return
 				}
 			}
 
 			for _, satellite := range satellites {
 				if err := insertSatellite(context.Background(), satellite); err != nil {
 					log.Printf("[loadDefaults] insertSatellite: %v", err)
+					return
 				}
 			}
 		},

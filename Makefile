@@ -4,7 +4,7 @@ include env/local.env
 export
 
 run:
-	PG_DSN=${LOCAL_PG_DSN} go run ./cmd/sputnik
+	go run ./cmd/sputnik --pg_dsn=${LOCAL_PG_DSN}
 
 # -------------------------------- Docker Env -------------------------------- #
 
@@ -27,3 +27,8 @@ run-api:
 
 run-k6:
 	(cd tests/k6 && k6 run script.js)
+
+# -------------------------------- Building -------------------------------- #
+
+build-windows:
+	GOOS=windows CGO_ENABLED=1 go build -ldflags="-s -w -H=windowsgui" ./cmd/sputnik

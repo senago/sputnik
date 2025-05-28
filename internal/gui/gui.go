@@ -1,11 +1,13 @@
 package gui
 
 import (
+	"context"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/driver/desktop"
-	"github.com/samber/lo"
+	"github.com/senago/sputnik/internal/dto"
 	"github.com/senago/sputnik/internal/gui/helpers"
 	"github.com/senago/sputnik/internal/gui/tabs"
 	"github.com/senago/sputnik/internal/ioc"
@@ -23,7 +25,9 @@ func New(deps *ioc.Container) fyne.Window {
 	window := fyneApp.NewWindow("sputnik")
 	window.Resize(fyne.NewSize(1280, 720))
 
-	appTabs := []*helpers.Tab{
+	fyneTabs := container.NewAppTabs()
+
+	baseTabs := []*helpers.Tab{
 		tabs.NewTabInfo(
 			deps.PortInsertOrbit(),
 			deps.PortInsertSatellite(),
@@ -50,20 +54,25 @@ func New(deps *ioc.Container) fyne.Window {
 		),
 	}
 
-	fyneTabs := container.NewAppTabs(
-		lo.Map(
-			appTabs,
-			func(appTab *helpers.Tab, _ int) *container.TabItem {
-				return appTab.TabItem
-			},
-		)...,
-	)
+	appTabs := func() []*helpers.Tab {
+		if !deps.IsConnectedToDB() {
+			return []*helpers.Tab{
+				tabs.NewTabSetup(func(settings dto.Settings) error {
+					if err := deps.ConnectDB(context.Background(), settings.DSN); err != nil {
+						return err
+					}
 
-	fyneTabs.OnSelected = func(ti *container.TabItem) {
-		for _, appTab := range appTabs {
-			appTab.OnSelected(ti)
+					redrawTabs(fyneTabs, baseTabs)
+
+					return nil
+				}),
+			}
 		}
-	}
+
+		return baseTabs
+	}()
+
+	redrawTabs(fyneTabs, appTabs)
 
 	window.SetContent(fyneTabs)
 
@@ -74,4 +83,20 @@ func New(deps *ioc.Container) fyne.Window {
 	}
 
 	return window
+}
+
+func redrawTabs(tabsContainer *container.AppTabs, tabs []*helpers.Tab) {
+	for _, item := range tabsContainer.Items {
+		tabsContainer.Remove(item)
+	}
+
+	for _, tab := range tabs {
+		tabsContainer.Append(tab.TabItem)
+	}
+
+	tabsContainer.OnSelected = func(ti *container.TabItem) {
+		for _, appTab := range tabs {
+			appTab.OnSelected(ti)
+		}
+	}
 }
