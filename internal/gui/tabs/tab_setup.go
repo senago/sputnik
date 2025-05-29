@@ -13,8 +13,11 @@ import (
 func NewTabSetup(
 	applySettings func(settings dto.Settings) error,
 ) *helpers.Tab {
-	helpText := canvas.NewText("Подключение к БД не установлено. Укажите DSN.", theme.TextColor())
+	helpText := canvas.NewText("Подключение к БД не установлено. Укажите DSN.", theme.Color(theme.ColorNameWarning))
+
+	const defaultDSN = "host=localhost user=postgres database=sputnik password=admin"
 	dsnEntry := widget.NewEntry()
+	dsnEntry.SetText(defaultDSN)
 
 	form := widget.NewForm(
 		widget.NewFormItem("dsn", dsnEntry),
