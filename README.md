@@ -6,7 +6,7 @@
 ### Запуск без docker
 Зависимости:
 - postgres@13
-- golang@1.24
+- golang@1.21
 
 После этого запуск:
 ```sh
@@ -25,5 +25,5 @@ make run-api
 ```
 
 ```sh
-make rrun-k6
+make run-k6
 ```
