@@ -31,6 +31,7 @@ func New(deps *ioc.Container) fyne.Window {
 		tabs.NewTabInfo(
 			deps.PortInsertOrbit(),
 			deps.PortInsertSatellite(),
+			deps.PortTruncateAll(),
 		),
 		tabs.NewSatelliteViewTab(
 			deps.PortGetSatellites(),

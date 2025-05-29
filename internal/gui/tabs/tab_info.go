@@ -2,9 +2,10 @@ package tabs
 
 import (
 	"context"
-	"log"
+	"fmt"
 
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"github.com/senago/sputnik/internal/domain"
 	"github.com/senago/sputnik/internal/gui/helpers"
@@ -14,11 +15,14 @@ import (
 func NewTabInfo(
 	insertOrbit port.InsertOrbit,
 	insertSatellite port.InsertSatellite,
+	truncateAll port.TruncateAll,
 ) *helpers.Tab {
-	label := widget.NewLabel("sputnik")
+	label := widget.NewRichTextFromMarkdown("# **sputnik**")
+	output := widget.NewLabel("")
 
-	buttonLoadDefaults := widget.NewButton(
+	buttonLoadDefaults := widget.NewButtonWithIcon(
 		"load defaults",
+		theme.StorageIcon(),
 		func() {
 			orbits := []domain.Orbit{
 				{
@@ -69,19 +73,39 @@ func NewTabInfo(
 				},
 			}
 
+			if err := truncateAll(context.Background()); err != nil {
+				output.SetText(fmt.Sprintf("truncateAll: %v", err))
+				return
+			}
+
 			for _, orbit := range orbits {
 				if err := insertOrbit(context.Background(), orbit); err != nil {
-					log.Printf("[loadDefaults] insertOrbit: %v", err)
+					output.SetText(fmt.Sprintf("insertOrbit: %v", err))
 					return
 				}
 			}
 
 			for _, satellite := range satellites {
 				if err := insertSatellite(context.Background(), satellite); err != nil {
-					log.Printf("[loadDefaults] insertSatellite: %v", err)
+					output.SetText(fmt.Sprintf("insertSatellite: %v", err))
 					return
 				}
 			}
+
+			output.SetText("loaded defaults")
+		},
+	)
+
+	buttonReset := widget.NewButtonWithIcon(
+		"reset",
+		theme.DeleteIcon(),
+		func() {
+			if err := truncateAll(context.Background()); err != nil {
+				output.SetText(fmt.Sprintf("truncateAll: %v", err))
+				return
+			}
+
+			output.SetText("reset")
 		},
 	)
 
@@ -94,7 +118,13 @@ func NewTabInfo(
 						container.NewCenter(
 							label,
 						),
-						buttonLoadDefaults,
+						container.NewHBox(
+							buttonLoadDefaults,
+							buttonReset,
+						),
+						container.NewCenter(
+							output,
+						),
 					),
 				),
 			),

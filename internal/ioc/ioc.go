@@ -138,6 +138,14 @@ func (c *Container) PortGetOrbits() port.GetOrbits {
 	}
 }
 
+func (c *Container) PortTruncateAll() port.TruncateAll {
+	return func(ctx context.Context) error {
+		ctx = c.db.MasterIntoContext(ctx)
+
+		return queries.TruncateAll(ctx)
+	}
+}
+
 func (c *Container) applyMigrations(ctx context.Context) error {
 	ctx = c.db.MasterIntoContext(ctx)
 
