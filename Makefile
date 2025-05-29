@@ -32,3 +32,6 @@ run-k6:
 
 build-windows:
 	GOOS=windows CGO_ENABLED=1 go build -ldflags="-s -w -H=windowsgui" ./cmd/sputnik
+
+compress-windows:
+	upx -5 sputnik.exe
