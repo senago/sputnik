@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 	"github.com/senago/sputnik/internal/domain"
@@ -51,7 +52,10 @@ func NewCreateOrbitTab(
 			"orbit create",
 			helpers.PadContainer(
 				container.NewVBox(
-					form,
+					helpers.PadContainerWithSize(
+						form,
+						fyne.NewSize(300, 0),
+					),
 					container.NewCenter(
 						output,
 					),

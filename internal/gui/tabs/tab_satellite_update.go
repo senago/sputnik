@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 	"github.com/samber/lo"
@@ -102,7 +103,10 @@ func NewSatelliteUpdateTab(
 			"satellite update",
 			helpers.PadContainer(
 				container.NewVBox(
-					form,
+					helpers.PadContainerWithSize(
+						form,
+						fyne.NewSize(300, 0),
+					),
 					container.NewCenter(
 						output,
 					),

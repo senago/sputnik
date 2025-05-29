@@ -57,6 +57,6 @@ func main() {
 }
 
 func exitWithError(err error) {
-	_, _ = fmt.Fprintln(os.Stderr, err)
+	_, _ = fmt.Println(err)
 	os.Exit(1)
 }
