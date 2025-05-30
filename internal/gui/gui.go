@@ -23,7 +23,7 @@ func New(deps *ioc.Container) fyne.Window {
 	fyneApp := app.New()
 
 	window := fyneApp.NewWindow("sputnik")
-	window.Resize(fyne.NewSize(1280, 720))
+	window.Resize(fyne.NewSize(1600, 900))
 
 	fyneTabs := container.NewAppTabs()
 

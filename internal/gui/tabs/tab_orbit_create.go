@@ -49,7 +49,7 @@ func NewCreateOrbitTab(
 
 	return helpers.NewTab(
 		container.NewTabItem(
-			"orbit create",
+			"Создание орбиты",
 			helpers.PadContainer(
 				container.NewVBox(
 					helpers.PadContainerWithSize(

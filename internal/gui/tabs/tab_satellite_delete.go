@@ -66,7 +66,7 @@ func NewSatelliteDeleteTab(
 
 	return helpers.NewTab(
 		container.NewTabItem(
-			"satellite delete",
+			"Создание орбиты",
 			helpers.PadContainer(
 				container.NewVBox(
 					helpers.PadContainerWithSize(

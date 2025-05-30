@@ -100,7 +100,7 @@ func NewSatelliteUpdateTab(
 
 	return helpers.NewTab(
 		container.NewTabItem(
-			"satellite update",
+			"Обновление спутника",
 			helpers.PadContainer(
 				container.NewVBox(
 					helpers.PadContainerWithSize(

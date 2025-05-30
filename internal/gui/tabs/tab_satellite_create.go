@@ -80,7 +80,7 @@ func NewSatelliteCreateTab(
 
 	return helpers.NewTab(
 		container.NewTabItem(
-			"create satellite",
+			"Создание спутника",
 			helpers.PadContainer(
 				container.NewVBox(
 					helpers.PadContainerWithSize(

@@ -13,6 +13,8 @@ var (
 	kanopusImage   image.Image
 	resourcePImage image.Image
 	kondorImage    image.Image
+	meteorMImage   image.Image
+	electroLImage  image.Image
 )
 
 func init() {
@@ -20,6 +22,8 @@ func init() {
 	kanopusImage = mustDecodeBase64Image(rawKanopusImage)
 	resourcePImage = mustDecodeBase64Image(rawResourcePImage)
 	kondorImage = mustDecodeBase64Image(rawKondorImage)
+	meteorMImage = mustDecodeBase64Image(rawMeteorMImage)
+	electroLImage = mustDecodeBase64Image(rawElectroLImage)
 }
 
 func GetEarthImage() image.Image {
@@ -34,6 +38,10 @@ func GetSatelliteImage(satelliteType domain.SatelliteType) image.Image {
 		return kanopusImage
 	case domain.SatelliteTypeKondor:
 		return kondorImage
+	case domain.SatelliteTypeMeteorM:
+		return meteorMImage
+	case domain.SatelliteTypeElectroL:
+		return electroLImage
 	default:
 		return resourcePImage
 	}

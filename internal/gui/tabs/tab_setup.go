@@ -37,7 +37,7 @@ func NewTabSetup(
 
 	return helpers.NewTab(
 		container.NewTabItem(
-			"setup",
+			"Настройка",
 			helpers.PadContainer(
 				container.NewVBox(
 					container.NewCenter(

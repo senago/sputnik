@@ -20,6 +20,9 @@ docker-env-down:
 docker-psql:
 	psql ${LOCAL_PG_DSN}
 
+docker-pg-dump:
+	pg_dump --data-only --column-inserts ${LOCAL_PG_DSN} > dump/dump.sql
+
 # -------------------------------- Load tests -------------------------------- #
 
 run-api:
@@ -30,8 +33,11 @@ run-k6:
 
 # -------------------------------- Building -------------------------------- #
 
-build-windows:
-	GOOS=windows CGO_ENABLED=1 go build -ldflags="-s -w -H=windowsgui" ./cmd/sputnik
-
 compress-windows:
-	upx -5 sputnik.exe
+	upx -5 ./bin/sputnik.exe
+
+build-windows:
+	docker build -t sputnik-windows .
+	docker create --name tmp-sputnik-windows sputnik-windows
+	docker cp tmp-sputnik-windows:/app/sputnik.exe ./bin/sputnik.exe
+	docker rm tmp-sputnik-windows

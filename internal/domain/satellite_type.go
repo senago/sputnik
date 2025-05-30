@@ -3,9 +3,11 @@ package domain
 type SatelliteType = string
 
 const (
-	SatelliteTypeResourceP = "resource-p"
-	SatelliteTypeKanopus   = "kanopus"
-	SatelliteTypeKondor    = "kondor"
+	SatelliteTypeResourceP = "РЕСУРС-П"
+	SatelliteTypeKanopus   = "КАНОПУС"
+	SatelliteTypeKondor    = "КОНДОР"
+	SatelliteTypeMeteorM   = "МЕТЕОР-М"
+	SatelliteTypeElectroL  = "ЭЛЕКТРО-Л"
 )
 
 func AllSatelliteType() []SatelliteType {
@@ -13,5 +15,7 @@ func AllSatelliteType() []SatelliteType {
 		SatelliteTypeResourceP,
 		SatelliteTypeKanopus,
 		SatelliteTypeKondor,
+		SatelliteTypeMeteorM,
+		SatelliteTypeElectroL,
 	}
 }

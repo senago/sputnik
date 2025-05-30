@@ -9,6 +9,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"github.com/samber/lo"
 	"github.com/senago/sputnik/internal/domain"
@@ -18,7 +19,7 @@ import (
 )
 
 // the hell is that?
-const earthPadding = 150
+const earthPadding = 300
 
 func NewSatelliteViewTab(
 	getSatellites port.GetSatellites,
@@ -73,17 +74,28 @@ func NewSatelliteViewTab(
 
 		orbitCircles := lo.Map(
 			orbits,
-			func(o domain.Orbit, _ int) *canvas.Circle {
+			func(o domain.Orbit, _ int) fyne.CanvasObject {
 				circle := canvas.NewCircle(color.Transparent)
 				circle.StrokeColor = color.RGBA{
-					R: 0,
-					G: 25,
-					B: 200,
-					A: 70,
+					R: 20,
+					G: 50,
+					B: 225,
+					A: 85,
 				}
-				circle.StrokeWidth = 4
+				circle.StrokeWidth = 8
 
-				return circle
+				label := widget.NewLabel(o.Name)
+				label.Alignment = fyne.TextAlignCenter
+				label.SizeName = theme.SizeNameCaptionText
+				label.TextStyle.Bold = true
+
+				return container.NewStack(
+					helpers.PadContainerWithSize(
+						label,
+						fyne.NewSquareSize(theme.CaptionTextSize()/2),
+					),
+					circle,
+				)
 			},
 		)
 
@@ -105,11 +117,12 @@ func NewSatelliteViewTab(
 
 			text := widget.NewLabel(
 				fmt.Sprintf(
-					"[%s]\n[%s]\n[%s]",
-					s.Name, s.Description, s.Orbit.Name,
+					"[%s]\n[%s]",
+					s.Name, s.Description,
 				),
 			)
 			text.Alignment = fyne.TextAlignCenter
+			text.SizeName = theme.SizeNameCaptionText
 
 			obj := container.NewVBox(
 				img,
@@ -128,12 +141,12 @@ func NewSatelliteViewTab(
 
 	return helpers.NewTab(
 		container.NewTabItem(
-			"satellite view",
+			"Представление",
 			helpers.PadContainer(
 				container.NewStack(
 					helpers.PadContainerWithSize(
 						image,
-						fyne.NewSize(150, 150),
+						fyne.NewSquareSize(earthPadding),
 					),
 					circlesContainer,
 					satellitesCanvas,
