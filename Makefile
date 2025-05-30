@@ -33,11 +33,17 @@ run-k6:
 
 # -------------------------------- Building -------------------------------- #
 
-compress-windows:
-	upx -5 ./bin/sputnik.exe
-
 build-windows:
-	docker build -t sputnik-windows .
+	make build-run && make build-extract && make build-compress
+
+build-run:
+	docker-buildx build -t sputnik-windows .
+	docker run --rm -v ${PWD}:/build sputnik-windows
+
+build-extract:
 	docker create --name tmp-sputnik-windows sputnik-windows
-	docker cp tmp-sputnik-windows:/app/sputnik.exe ./bin/sputnik.exe
+	docker cp tmp-sputnik-windows:/app/sputnik.exe ./build/sputnik.exe
 	docker rm tmp-sputnik-windows
+
+build-compress:
+	upx -5 ./build/sputnik.exe

@@ -2,6 +2,7 @@ package gui
 
 import (
 	"context"
+	"os"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -24,6 +25,7 @@ func New(deps *ioc.Container) fyne.Window {
 
 	window := fyneApp.NewWindow("sputnik")
 	window.Resize(fyne.NewSize(1600, 900))
+	os.Setenv("FYNE_SCALE", "0.75")
 
 	fyneTabs := container.NewAppTabs()
 
